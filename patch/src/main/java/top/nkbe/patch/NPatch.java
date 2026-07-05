@@ -50,6 +50,16 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
+public class SecurityInitializer {
+    public static void initialize() {
+        if (Security.getProvider("BC") == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
+    }
+}
+
 public class NPatch {
 
     private static final String NPATCH_KEYSTORE_PASSWORD_ENC = "a2hpbm9s";
@@ -241,6 +251,7 @@ public class NPatch {
 
             // sign apk
             try {
+                SecurityInitializer.initialize()
                 var keyStore = KeyStore.getInstance("BKS");
                 if (useNpatchKeystore || (!useFpaKeystore && keystoreArgs == null)) {
                     logger.i("Register apk signer with built-in NPatch keystore...");
